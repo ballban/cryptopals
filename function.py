@@ -2,6 +2,7 @@ from collections import defaultdict
 import string
 import requests
 from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
 import random
 import os
 import re
@@ -85,17 +86,19 @@ def decrypt_ECB(encrypted_bytes: bytes, key) -> bytes:
 
 
 def padding_PKCS7(input_bytes: bytes, block_size: int):
-  pad_length = block_size - len(input_bytes) % block_size
-  return input_bytes + pad_length.to_bytes(1, 'big') * pad_length
+  # pad_length = block_size - len(input_bytes) % block_size
+  # return input_bytes + pad_length.to_bytes(1, 'big') * pad_length
+  return pad(input_bytes, block_size)
 
 
 def unpadding_PKCS7(input_bytes: bytes):
-  target_byte = input_bytes[-1]
-  print(f'input_bytes {input_bytes}')
-  if input_bytes[-target_byte:] == target_byte.to_bytes(1, 'big') * target_byte:
-    return input_bytes[:-target_byte]
-  else:
-    return input_bytes
+  # target_byte = input_bytes[-1]
+  # print(f'input_bytes {input_bytes}')
+  # if input_bytes[-target_byte:] == target_byte.to_bytes(1, 'big') * target_byte:
+  #   return input_bytes[:-target_byte]
+  # else:
+  #   return input_bytes
+  return unpad(input_bytes, 16)
 
 
 def encrypt_CBC(text_bytes: bytes, key: bytes, block_size: int, initialization_vector: bytes):
@@ -316,3 +319,7 @@ def parse_16(decrypt_bytes):
 
 def print_bytes(text_bytes, block_size = 16):
   print([text_bytes[i:i+block_size] for i in range(0, len(text_bytes), block_size)])
+
+
+def xor_bytes(ba1, ba2):
+  return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
