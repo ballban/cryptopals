@@ -12,7 +12,7 @@ def print_bytes(text_bytes, block_size = 16):
   print([text_bytes[i:i+block_size] for i in range(0, len(text_bytes), block_size)])
 
 
-def xor_bytes(ba1, ba2):
+def xor_bytes(ba1: bytes, ba2: bytes) -> bytes:
   return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
 
 ''' Get text from url '''
@@ -22,7 +22,7 @@ def get_txt_from_url(url):
   return text_list
 
 ''' Create a block_size-long key bytes '''
-def random_aes_key(block_size = 16) -> bytes:
+def create_random_aes_key(block_size = 16) -> bytes:
   return os.urandom(block_size)
 
 ''' ECB Encrypt '''
@@ -87,3 +87,17 @@ def decrypt_CBC(text_bytes: bytes, key: bytes, block_size: int, initialization_v
     pre_block = block
     result += plain_text
   return bytes(result) if is_unpadding else unpadding_PKCS7(bytes(result), block_size)
+
+''' CTR encrypt/decrypt '''
+def exec_CTR(input_bytes: bytes, key: bytes, nonce: int) -> bytes:
+    cipher = AES.new(key=key, mode=AES.MODE_ECB)
+    block_size = len(key)
+    
+    block_list = [input_bytes[i:i+block_size] for i in range(0, len(input_bytes), block_size)]
+    counter = 0
+    result = []
+    for block in block_list:
+        key_stream = cipher.encrypt(nonce.to_bytes(block_size // 2, 'little') + counter.to_bytes(block_size // 2, 'little'))
+        result += [x1 ^ x2 for x1, x2 in zip(key_stream, block)]
+        counter += 1
+    return bytes(result)

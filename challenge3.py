@@ -38,7 +38,7 @@ def get_score(text):
     elif key not in string.printable:
       score = 0
       break
-  return score
+  return round(score, 2)
 
 
 def get_frequency_dic(text):
