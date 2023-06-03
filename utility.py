@@ -16,9 +16,13 @@ def xor_bytes(ba1: bytes, ba2: bytes) -> bytes:
   return bytes([_a ^ _b for _a, _b in zip(ba1, ba2)])
 
 ''' Get text from url '''
-def get_txt_from_url(url):
+def get_txt_from_url(url: str) -> list:
   f = requests.get(url).content.decode('utf-8')
   text_list = f.split('\n')
+  return text_list
+def get_txt_from_url_b64decode(url: str) -> list:
+  text_list = get_txt_from_url(url)
+  text_list = [base64.b64decode(x) for x in text_list]
   return text_list
 
 ''' Create a block_size-long key bytes '''
