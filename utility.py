@@ -25,8 +25,8 @@ def get_txt_from_url_b64decode(url: str) -> list:
   text_list = [base64.b64decode(x) for x in text_list]
   return text_list
 
-''' Create a block_size-long key bytes '''
-def create_random_aes_key(block_size = 16) -> bytes:
+''' Generate a block_size-long key bytes '''
+def generate_random_aes_key(block_size = 16) -> bytes:
   return os.urandom(block_size)
 
 ''' ECB Encrypt '''

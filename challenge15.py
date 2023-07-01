@@ -5,10 +5,11 @@ def check_and_strip_PKCS7(plain_bytes, block_size):
     raise Exception('Wrong size!')
 
   while True:
-    if plain_bytes[-1:] == b'\x04':
-      plain_bytes = plain_bytes[:-1]
+    last_byte = plain_bytes[-1]
+    if plain_bytes[-last_byte:] == bytes([last_byte] * last_byte):
+      return plain_bytes[:-last_byte]
     elif plain_bytes[-1:] not in string.printable.encode():
-      raise Exception('Bad padding!')
+      raise Exception(f'Bad padding!:{plain_bytes}')
     else:
       break
   return plain_bytes

@@ -2,7 +2,7 @@ from utility import *
 
 def encryption_oracle(plain_text: str, block_size: int) -> bytes:
   bytes_text = plain_text.encode()
-  random_key = create_random_aes_key()
+  random_key = generate_random_aes_key()
   
   append_count = random.randint(5, 10)
   bytes_text = os.urandom(append_count) + bytes_text + os.urandom(append_count)
