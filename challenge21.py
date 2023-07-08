@@ -20,6 +20,7 @@ class MT19937:
     # x be the next value from the series
     # z be the value returned from the algorithm
     # a, b, b be TGFSR(R) tempering bitmasks
+    # 当mask为1的时候, 做XOR运算, 0的时候, 直接复制
     d, b, c = 0xFFFFFFFF, 0x9D2C5680, 0xEFC60000
 
     # u, s, t, l be TGFSR(R) tempering bit shifts
@@ -48,11 +49,11 @@ class MT19937:
     def rand(self):
         if self.cnt == MT19937.n:
             self.twist()
-        y = self.X[self.cnt]
-        y = y ^ ((y >> MT19937.u) & MT19937.d)
-        y = y ^ ((y << MT19937.s) & MT19937.b)
-        y = y ^ ((y << MT19937.t) & MT19937.c)
-        z = y ^ (y >> MT19937.l)
+        y1 = self.X[self.cnt]
+        y2 = y1 ^ ((y1 >> MT19937.u) & MT19937.d)
+        y3 = y2 ^ ((y2 << MT19937.s) & MT19937.b)
+        y4 = y3 ^ ((y3 << MT19937.t) & MT19937.c)
+        z = y4 ^ (y4 >> MT19937.l)
         self.cnt += 1
         return self.cut_bit(z)
     
