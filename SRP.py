@@ -16,7 +16,7 @@ fffffffffffff'''
         self.g = 2
         self.k = 3
         self.I = 'test@abc.com'
-        self.P = 'password123'
+        self.P = 'password'
         # Step 1: Generate salt as random integer
         self.salt = random.randint(2, self.N)
         # Step 2: Generate string xH=SHA256(salt|password)
@@ -54,14 +54,18 @@ class SRP_client:
         self.A = pow(self.g, self.a, self.N)
         return self.A
     
-    def generate_HMAC(self, salt, B):
+    def generate_HMAC(self, salt, B, u=None):
         xH = hashlib.sha256(str(salt).encode() + self.P.encode()).hexdigest()
         x = int(xH, 16)
-        uH = hashlib.sha256(str(self.A).encode() + str(B).encode()).hexdigest()
-        u = int(uH, 16)
+        if not u:
+            uH = hashlib.sha256(str(self.A).encode() + str(B).encode()).hexdigest()
+            u = int(uH, 16)
 
         # Client Side: Send HMAC-SHA256(K, salt)
-        self.S = pow(B - self.k * pow(self.g, x, self.N), self.a + u * x, self.N)
+        if not u:
+            self.S = pow(B - self.k * pow(self.g, x, self.N), self.a + u * x, self.N)
+        else:
+            self.S = pow(B, self.a + u * x, self.N)
         self.K = hashlib.sha256(str(self.S).encode()).hexdigest()
         HMAC = hashlib.sha256((self.K + str(salt)).encode()).hexdigest()
         return HMAC
