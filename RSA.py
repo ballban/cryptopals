@@ -6,13 +6,13 @@ class RSA:
         self.p = self.q = self.et = 0
 
         while self.et % self.e == 0:
-            size = 2048
+            # size = 2048
+            size = 1024
             self.p = number.getPrime(size)
             self.q = number.getPrime(size)
             self.et = (self.p - 1) * (self.q - 1)
 
         self.N = self.p * self.q
-
         self.d = pow(self.e, -1, self.et)
 
     
@@ -25,8 +25,14 @@ class RSA:
             old_r, r = r, old_r - q * r
             old_s, s = s, old_s - q * s
             old_t, t = t, old_t - q * t
-        print(r, s, t)
         return old_r, old_s, old_t
+    
+    def modinv(self, a, m):
+        g, x, y = self.EGCD(a, m)
+        if g != 1:
+            raise ValueError('not available')
+        else:
+            return x % m
     
     def encrypt(self, text:str) -> int:
         m = int(text.encode().hex(), 16)
