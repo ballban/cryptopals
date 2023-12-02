@@ -39,6 +39,16 @@ class RSA:
         c = pow(m, self.e, self.N)
         return c
 
-    def decript(self, c:int) -> str:
+    def decrypt(self, c:int) -> str:
         m = pow(c, self.d, self.N)
         return bytes.fromhex(hex(m)[2:]).decode()
+    
+    def encrypt_for_sig(self, input:int) -> bytes:
+        c = pow(input, self.e, self.N)
+        return c.to_bytes((c.bit_length() + 7) // 8, 'little')
+
+    def decrypt_for_sig(self, input:bytes) -> int:
+        c = int.from_bytes(input, 'little')
+        m = pow(c, self.d, self.N)
+        return m
+    
