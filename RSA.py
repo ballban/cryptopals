@@ -1,4 +1,5 @@
 from Crypto.Util import number
+from utility import *
 
 class RSA:
     def __init__(self) -> None:
@@ -7,7 +8,7 @@ class RSA:
 
         while self.et % self.e == 0:
             # size = 2048
-            size = 1024
+            size = 512
             self.p = number.getPrime(size)
             self.q = number.getPrime(size)
             self.et = (self.p - 1) * (self.q - 1)
@@ -45,10 +46,9 @@ class RSA:
     
     def encrypt_for_sig(self, input:int) -> bytes:
         c = pow(input, self.e, self.N)
-        return c.to_bytes((c.bit_length() + 7) // 8, 'little')
+        return int_to_bytes(c)
 
     def decrypt_for_sig(self, input:bytes) -> int:
-        c = int.from_bytes(input, 'little')
+        c = int.from_bytes(input, 'big')
         m = pow(c, self.d, self.N)
         return m
-    

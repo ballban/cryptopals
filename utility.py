@@ -105,3 +105,7 @@ def exec_CTR(input_bytes: bytes, key: bytes, nonce: int) -> bytes:
         result += [x1 ^ x2 for x1, x2 in zip(key_stream, block)]
         counter += 1
     return bytes(result)
+
+''' Convert int to bytes'''
+def int_to_bytes(a: int, b = 'big'):
+    return a.to_bytes(128, b)
