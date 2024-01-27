@@ -21,12 +21,15 @@ class PKCS1_1_5:
         
         i = 2
         while signature[i] != 0:
+            # todo: fix the check
             assert signature[i] == 255
             i += 1
             if i == len(signature):
                 break
         
-        ASN1 = signature[i + 1:]
+        ASN1 = signature[-20:]
+        print('ASN1', ASN1)
+        print('mHash', mHash)
 
         assert ASN1 == mHash
         return True
