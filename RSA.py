@@ -8,7 +8,7 @@ class RSA:
 
         while self.et % self.e == 0:
             # size = 2048
-            size = 512
+            size = 1024
             self.p = number.getPrime(size)
             self.q = number.getPrime(size)
             self.et = (self.p - 1) * (self.q - 1)
@@ -43,6 +43,10 @@ class RSA:
     def decrypt(self, c:int) -> str:
         m = pow(c, self.d, self.N)
         return bytes.fromhex(hex(m)[2:]).decode()
+    
+    def decrypt_to_int(self, c:int) -> int:
+        m = pow(c, self.d, self.N)
+        return m
     
     def encrypt_for_sig(self, input:int) -> bytes:
         c = pow(input, self.e, self.N)
