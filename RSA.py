@@ -8,7 +8,7 @@ class RSA:
 
         while self.et % self.e == 0:
             # size = 2048
-            size = 1024
+            size = 512
             self.p = number.getPrime(size)
             self.q = number.getPrime(size)
             self.et = (self.p - 1) * (self.q - 1)
