@@ -3,6 +3,31 @@ import random
 
 
 class SRP_server:
+    """
+    Secure Remote Password (SRP) server implementation.
+
+    This class represents a server in the SRP protocol. It provides methods for generating
+    salt and B values, as well as validating the client's A value and HMAC.
+
+    Attributes:
+        N (int): The prime modulus used in the SRP protocol.
+        g (int): The generator used in the SRP protocol.
+        k (int): The multiplier used in the SRP protocol.
+        I (str): The user's identity.
+        P (str): The user's password.
+        salt (int): The randomly generated salt value.
+        v (int): The verifier value calculated from the password and salt.
+        b (int): The randomly generated private key.
+        B (int): The public key sent to the client.
+        S (int): The shared secret key.
+        K (str): The session key derived from the shared secret.
+
+    Methods:
+        get_salt_and_B: Generates the salt and B values.
+        validate_K: Validates the client's A value and HMAC.
+
+    """
+
     def __init__(self) -> None:
         N_str = '''ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024
 e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd
@@ -28,11 +53,29 @@ fffffffffffff'''
         # Step 5: Save everything but x, xH
     
     def get_salt_and_B(self):
+        """
+        Generates the salt and B values.
+
+        Returns:
+            tuple: A tuple containing the salt and B values.
+
+        """
         self.b = random.randint(2, self.N)
         self.B = self.k*self.v + pow(self.g, self.b, self.N)
         return self.salt, self.B
     
     def validate_K(self, A, HMAC_c):
+        """
+        Validates the client's A value and HMAC.
+
+        Args:
+            A (int): The client's public key.
+            HMAC_c (str): The HMAC sent by the client.
+
+        Returns:
+            str: "ok" if the HMAC is valid, "wrong!" otherwise.
+
+        """
         uH = hashlib.sha256(str(A).encode() + str(self.B).encode()).hexdigest()
         u = int(uH, 16)
         self.S = pow(A * pow(self.v,u,self.N), self.b, self.N)
