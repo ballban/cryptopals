@@ -60,6 +60,7 @@ def unpadding_PKCS7(input_bytes: bytes, block_size: int) -> bytes:
   #   return input_bytes[:-target_byte]
   # else:
   #   return input_bytes
+  # print(input_bytes, block_size)
   return unpad(input_bytes, block_size)
 
 ''' CBC Encrypt '''
