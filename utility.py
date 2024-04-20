@@ -107,6 +107,13 @@ def exec_CTR(input_bytes: bytes, key: bytes, nonce: int) -> bytes:
         counter += 1
     return bytes(result)
 
-''' Convert int to bytes'''
-def int_to_bytes(a: int, b = 'big'):
-    return a.to_bytes(128, b)
+def int_to_bytes(num:int, length=0):
+  if length == 0:
+    input_hex = hex(num)[2:0]
+    input_hex = f'0{input_hex}' if len(input_hex) % 2 == 1 else input_hex
+    return bytes.fromhex(input_hex)
+  else:
+    return bytes.fromhex(f"{num:0{length*2}x}")
+
+def bytes_to_int(input:bytes):
+  return int(input.hex(), 16)

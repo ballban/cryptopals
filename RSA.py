@@ -6,7 +6,7 @@ class RSA:
     RSA class for encryption and decryption using the RSA algorithm.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, key_bit_size=2048) -> None:
         """
         Initializes the RSA object with default values for e, p, q, et, N, and d.
         """
@@ -14,8 +14,7 @@ class RSA:
         self.p = self.q = self.et = 0
 
         while self.et % self.e == 0:
-            # size = 2048
-            size = 512
+            size = key_bit_size // 2
             self.p = number.getPrime(size)
             self.q = number.getPrime(size)
             self.et = (self.p - 1) * (self.q - 1)
@@ -66,7 +65,7 @@ class RSA:
         else:
             return x % m
     
-    def encrypt(self, text:str) -> int:
+    def encrypt(self, text:any) -> int:
         """
         Encrypts the given text using RSA encryption.
 
@@ -76,7 +75,10 @@ class RSA:
         Returns:
             int: The encrypted ciphertext.
         """
-        m = int(text.encode().hex(), 16)
+        if type(text) == str:
+            m = int(text.encode().hex(), 16)
+        else:
+            m = bytes_to_int(text)
         c = pow(m, self.e, self.N)
         return c
 
@@ -86,12 +88,13 @@ class RSA:
 
         Args:
             c (int): The ciphertext to be decrypted.
+            size (int): The size of the original plaintext in bytes.
 
         Returns:
             str: The decrypted plaintext.
         """
         m = pow(c, self.d, self.N)
-        return bytes.fromhex(hex(m)[2:]).decode()
+        return int_to_bytes(m).decode()
     
     def decrypt_to_int(self, c:int) -> int:
         """
@@ -106,7 +109,7 @@ class RSA:
         m = pow(c, self.d, self.N)
         return m
     
-    def encrypt_for_sig(self, input:int) -> bytes:
+    def encrypt_for_sig(self, input:int, hex_size:int) -> bytes:
         """
         Encrypts the given input for digital signature using RSA encryption.
 
@@ -117,7 +120,7 @@ class RSA:
             bytes: The encrypted ciphertext as bytes.
         """
         c = pow(input, self.e, self.N)
-        return int_to_bytes(c)
+        return int_to_bytes(c, hex_size)
 
     def decrypt_for_sig(self, input:bytes) -> int:
         """
@@ -129,6 +132,6 @@ class RSA:
         Returns:
             int: The decrypted plaintext as an integer.
         """
-        c = int.from_bytes(input, 'big')
-        m = pow(c, self.d, self.N)
+        hex_input = input.hex()
+        m = pow(int(hex_input, 16), self.d, self.N)
         return m
